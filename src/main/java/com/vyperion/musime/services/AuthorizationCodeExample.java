@@ -18,7 +18,7 @@ public class AuthorizationCodeExample {
     private static final String clientId = "19f19dbaf333441b95d99d89515e8af5";
     private static final String clientSecret = "74e2b03c22824ee7801dc9936b8854cf";
     private static final URI redirectUri = SpotifyHttpManager.makeUri("http://8181bb28.ngrok.io/callback");
-    private static final String code = "AQCNhVdhIgEYVPR-nANid6E1nA85mDnceuyGmdnp7SolCtolqwg85RRlfs-fkKdyD2b5IZAmDgySTJVg7Xfq33NACzVr-PWZT10gubaOOhE3GdS-eTRT6MAydmn9apTMnJ1jpyDbPzqdtgKWOH0AG3ChWe6ojT_KMtRr-Yw3hSyeKmJwmndg3fpYwXlD96fL1NTk0RYa5RP3CEsdqddRzOhzyRGqexaLxv5GDxkwfCCf1m--oLhZ0TQwsk2qVlLMtojf-j95YQN5r8opjj5StSACc2KKRsgwq7epVVs3";
+    private static final String code = "AQCMX_CzXarPmff0M5O9gEZr1ngp_eO7f43SOOkPyKzbIaxbYLSHQtALME4RWiU5cU8LqTgXdqf-JbDlkEuO7j5mRBCDEm8obWHglbPfGJTAZvBumqPbSS5Gi_uKs39QSyEQu8H1v9JJLg9HP1dxRSq-npVsYPn-kOF_Bs1egkaEFT_rBdyGhShRjy52bWcYh4Qk_b5Bx2Ix6gy9a8AeyXH2y3OWOnhNd4sqr_isLo8-Oy6LPUEy9LBfAHEyutrOLdW14poEwVKF8JEXja6yBOMqti4UbVTX3jEQjdkg";
 
     private static final SpotifyApi spotifyApi = new SpotifyApi.Builder()
             .setClientId(clientId)
@@ -37,6 +37,7 @@ public class AuthorizationCodeExample {
             spotifyApi.setRefreshToken(authorizationCodeCredentials.getRefreshToken());
 
             System.out.println(spotifyApi.getAccessToken());
+            System.out.println("refresh is -> ".concat(spotifyApi.getRefreshToken()));
             System.out.println(spotifyApi.getTrack("11dFghVXANMlKmJXsNCbNl"));
 
             System.out.println("Expires in: " + authorizationCodeCredentials.getExpiresIn());

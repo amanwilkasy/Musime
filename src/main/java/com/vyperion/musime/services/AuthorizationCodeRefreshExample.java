@@ -13,7 +13,7 @@ import java.util.concurrent.CompletionException;
 public class AuthorizationCodeRefreshExample {
     private static final String clientId = "19f19dbaf333441b95d99d89515e8af5";
     private static final String clientSecret = "74e2b03c22824ee7801dc9936b8854cf";
-    private static final String refreshToken = "";
+    private static final String refreshToken = "AQDUoM4oHEf0lNvD314jQ7KoNu4wPs__Rpx4hrZsJV2iIQ_a2HL5YIFQpSWcAC23iISa1Xf0tVe169NyoW-K6FZ7fnRSuZsutSe-QLp2bJmB-nWhtggsK3347Sg7zYmON9LM0Q";
 
     private static final SpotifyApi spotifyApi = new SpotifyApi.Builder()
             .setClientId(clientId)
@@ -23,7 +23,7 @@ public class AuthorizationCodeRefreshExample {
     private static final AuthorizationCodeRefreshRequest authorizationCodeRefreshRequest = spotifyApi.authorizationCodeRefresh()
             .build();
 
-    public static void authorizationCodeRefresh_Sync() {
+    public static AuthorizationCodeCredentials authorizationCodeRefresh_Sync() {
         try {
             final AuthorizationCodeCredentials authorizationCodeCredentials = authorizationCodeRefreshRequest.execute();
 
@@ -31,9 +31,13 @@ public class AuthorizationCodeRefreshExample {
             spotifyApi.setAccessToken(authorizationCodeCredentials.getAccessToken());
             spotifyApi.setRefreshToken(authorizationCodeCredentials.getRefreshToken());
 
+            System.out.println("new class refresh is -> ".concat(authorizationCodeCredentials.getRefreshToken()) );
+
             System.out.println("Expires in: " + authorizationCodeCredentials.getExpiresIn());
+            return authorizationCodeCredentials;
         } catch (IOException | SpotifyWebApiException e) {
             System.out.println("Error: " + e.getMessage());
+            return null;
         }
     }
 

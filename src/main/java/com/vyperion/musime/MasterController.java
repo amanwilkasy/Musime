@@ -2,6 +2,7 @@ package com.vyperion.musime;
 
 
 import com.vyperion.musime.services.AuthorizationCodeExample;
+import com.vyperion.musime.services.AuthorizationCodeRefreshExample;
 import com.vyperion.musime.services.AuthorizationCodeUriExample;
 import com.vyperion.musime.services.BasicService;
 import com.wrapper.spotify.model_objects.credentials.AuthorizationCodeCredentials;
@@ -33,15 +34,16 @@ public class MasterController {
         return ResponseEntity.ok().body(AuthorizationCodeUriExample.authorizationCodeUri_Sync());
     }
 
-    @GetMapping("callback")
-    public ResponseEntity<String> callback() {
 
-        return ResponseEntity.ok().body("hit callback");
-    }
 
     @GetMapping("code")
     public ResponseEntity<AuthorizationCodeCredentials> code() {
         return ResponseEntity.ok().body(AuthorizationCodeExample.authorizationCode_Sync());
+    }
+
+    @GetMapping("fresh")
+    public ResponseEntity<AuthorizationCodeCredentials> refresh() {
+        return ResponseEntity.ok().body(AuthorizationCodeRefreshExample.authorizationCodeRefresh_Sync());
     }
 
 
