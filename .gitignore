@@ -34,3 +34,6 @@ out/
 ### Dev Tools ###
 ngrok
 gradlew
+.DS_Store
+bin
+src/main/resources/songdata/*

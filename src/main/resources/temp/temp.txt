@@ -1,0 +1,20 @@
+   //basic service, no auth multi thread call
+   public static void clientCredentials_Async() {
+        try {
+            final CompletableFuture<ClientCredentials> clientCredentialsFuture = clientCredentialsRequest.executeAsync();
+
+            // Thread free to do other tasks...
+
+            // Example Only. Never block in production code.
+            final ClientCredentials clientCredentials = clientCredentialsFuture.join();
+
+            // Set access token for further "spotifyApi" object usage
+            spotifyApi.setAccessToken(clientCredentials.getAccessToken());
+
+            System.out.println("Expires in: " + clientCredentials.getExpiresIn());
+        } catch (CompletionException e) {
+            System.out.println("Error: " + e.getCause().getMessage());
+        } catch (CancellationException e) {
+            System.out.println("Async operation cancelled.");
+        }
+    }

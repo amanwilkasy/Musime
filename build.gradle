@@ -32,4 +32,5 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     compile 'se.michaelthelin.spotify:spotify-web-api-java:4.0.2'
+    compile 'com.google.guava:guava:28.1-jre'
 }
