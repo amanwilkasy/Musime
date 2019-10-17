@@ -1,6 +1,7 @@
 package com.vyperion.musime.controllers;
 
 import com.vyperion.musime.services.SpotifyAuthorization;
+import com.vyperion.musime.services.SpotifyUtility;
 import com.wrapper.spotify.model_objects.credentials.AuthorizationCodeCredentials;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +19,11 @@ public class SpotifyAuthController {
 
     private SpotifyAuthorization spotifyAuthorization;
 
-    public SpotifyAuthController(SpotifyAuthorization spotifyAuthorization) {
+    private final SpotifyUtility spotifyUtility;
+
+    public SpotifyAuthController(SpotifyAuthorization spotifyAuthorization, SpotifyUtility spotifyUtility) {
         this.spotifyAuthorization = spotifyAuthorization;
+        this.spotifyUtility = spotifyUtility;
     }
 
     @GetMapping("login")
@@ -31,8 +35,7 @@ public class SpotifyAuthController {
     public ResponseEntity<AuthorizationCodeCredentials> callback(@RequestParam("code") String code) {
         spotifyAuthorization.setCode(code);
         AuthorizationCodeCredentials some = spotifyAuthorization.getAccessCredentials();
-        System.out.println(some.getAccessToken());
-        System.out.println(some.getRefreshToken());
+        System.out.println("Token: ".concat(some.getAccessToken()));
         return ResponseEntity.ok().body(some);
     }
 
@@ -40,6 +43,7 @@ public class SpotifyAuthController {
     public ResponseEntity<AuthorizationCodeCredentials> tempRefresh() {
         return ResponseEntity.ok().body(spotifyAuthorization.setRefresh());
     }
+
 
 }
 

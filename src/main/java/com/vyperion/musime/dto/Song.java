@@ -22,7 +22,10 @@ package com.vyperion.musime.dto;
         "valence": 0.713
      */
 
+import com.wrapper.spotify.enums.Modality;
 import com.wrapper.spotify.model_objects.specification.ArtistSimplified;
+import com.wrapper.spotify.model_objects.specification.AudioFeatures;
+import com.wrapper.spotify.model_objects.specification.Track;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,9 +36,9 @@ import lombok.NoArgsConstructor;
 public class Song {
 
     private String id;
-    private String artist[];
+    private ArtistSimplified[] artists;
     private String songName;
-    private String mode;
+    private Modality mode;
     private int popularity;
     private float acousticness;
     private float danceability;
@@ -50,12 +53,33 @@ public class Song {
     private float timeSignature;
     private float valence;
 
-    public void setArtist(ArtistSimplified[] artists) {
-        this.artist = new String[artists.length];
-        for (int i = 0; i < artists.length; i++) {
-            artist[i] = artists[i].getName();
-        }
+    public Song(Track track, AudioFeatures audioFeature) {
+        this.id = track.getId();
+        this.artists = track.getArtists();
+        this.songName = track.getName();
+        this.mode = audioFeature.getMode();
+        this.acousticness = audioFeature.getAcousticness();
+        this.danceability = audioFeature.getDanceability();
+        this.durationMs = audioFeature.getDurationMs();
+        this.energy = audioFeature.getEnergy();
+        this.instrumentalness = audioFeature.getInstrumentalness();
+        this.key = audioFeature.getKey();
+        this.liveness = audioFeature.getLiveness();
+        this.loudness = audioFeature.getLoudness();
+        this.speechiness = audioFeature.getSpeechiness();
+        this.tempo = audioFeature.getTempo();
+        this.timeSignature = audioFeature.getTimeSignature();
+        this.valence = audioFeature.getValence();
+        this.popularity = track.getPopularity();
+
     }
+
+    //    public void setArtist(ArtistSimplified[] artists) {
+//        this.artist = new String[artists.length];
+//        for (int i = 0; i < artists.length; i++) {
+//            artist[i] = artists[i].getName();
+//        }
+//    }
 
 //
 //    public void setArtist(String artist) {
