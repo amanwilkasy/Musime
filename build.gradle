@@ -33,4 +33,5 @@ dependencies {
 
     compile 'se.michaelthelin.spotify:spotify-web-api-java:4.0.2'
     compile 'com.google.guava:guava:28.1-jre'
+
 }

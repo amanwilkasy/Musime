@@ -73,18 +73,6 @@ public class Song {
         this.popularity = track.getPopularity();
 
     }
-
-    //    public void setArtist(ArtistSimplified[] artists) {
-//        this.artist = new String[artists.length];
-//        for (int i = 0; i < artists.length; i++) {
-//            artist[i] = artists[i].getName();
-//        }
-//    }
-
-//
-//    public void setArtist(String artist) {
-//        this.artist[0] = artist;
-//    }
 }
 
 

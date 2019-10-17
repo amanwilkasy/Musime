@@ -1,7 +1,6 @@
 package com.vyperion.musime.controllers;
 
 import com.vyperion.musime.services.SpotifyAuthorization;
-import com.vyperion.musime.services.SpotifyUtility;
 import com.wrapper.spotify.model_objects.credentials.AuthorizationCodeCredentials;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +18,8 @@ public class SpotifyAuthController {
 
     private SpotifyAuthorization spotifyAuthorization;
 
-    private final SpotifyUtility spotifyUtility;
-
-    public SpotifyAuthController(SpotifyAuthorization spotifyAuthorization, SpotifyUtility spotifyUtility) {
+    public SpotifyAuthController(SpotifyAuthorization spotifyAuthorization) {
         this.spotifyAuthorization = spotifyAuthorization;
-        this.spotifyUtility = spotifyUtility;
     }
 
     @GetMapping("login")
