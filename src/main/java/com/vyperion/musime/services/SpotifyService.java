@@ -25,7 +25,13 @@ public class SpotifyService {
         this.spotifyApi = spotifyApi;
     }
 
+    static void sout(String message){
+        System.out.println(message);
+    }
+
+
     public List<PlaylistSimplified> getAllPlaylists() {
+        System.out.println("**");
         List<PlaylistSimplified> playlists = new LinkedList<>();
         Optional<Paging<PlaylistSimplified>> playlistPage;
         final int maxLimit = 50;
@@ -33,17 +39,19 @@ public class SpotifyService {
         throttle(1, "getAllPlaylists");
         try {
             playlistPage = Optional.ofNullable(spotifyApi.getListOfCurrentUsersPlaylists().limit(maxLimit).build().execute());
+            playlistPage.ifPresent(playlistPaging -> playlists.addAll(Arrays.asList(playlistPaging.getItems())));
 
+            System.out.println("((");
             while (playlistPage.isPresent() && playlistPage.get().getNext() != null) {
                 throttle(1, "getAllPlaylists");
 
-                playlists.addAll(Arrays.asList(playlistPage.get().getItems()));
+//                playlists.addAll(Arrays.asList(playlistPage.get().getItems()));
                 offset += playlistPage.get().getLimit();
 
                 playlistPage = Optional.ofNullable(spotifyApi.getListOfCurrentUsersPlaylists()
                         .offset(offset).limit(maxLimit).build().execute());
                 playlistPage.ifPresent(playlistPaging -> playlists.addAll(Arrays.asList(playlistPaging.getItems())));
-
+                System.out.println(33);
             }
         } catch (IOException | SpotifyWebApiException e) {
             System.out.println("Error:1 " + e.getMessage());
@@ -51,18 +59,30 @@ public class SpotifyService {
         return playlists;
     }
 
+    //need to workout paging
     //37i9dQZF1DWUgX5cUT0GbU
     public List<PlaylistTrack> getTracksFromPlaylist(String playlistId) {
+        System.out.println("&&");
         List<PlaylistTrack> playlistTrack = new ArrayList<>();
         Optional<Paging<PlaylistTrack>> tracksPage;
+        int offset = 0;
+        int maxLimit = 100;
         throttle(1, "getTracksFromPlaylist");
         try {
             tracksPage = Optional.ofNullable(getTracksFromPlaylistRequest(playlistId).execute());
+            tracksPage.ifPresent(playlistTrackPaging -> playlistTrack.addAll(Arrays.asList(playlistTrackPaging.getItems())));
 
             while (tracksPage.isPresent() && tracksPage.get().getNext() != null) {
                 throttle(1, "getTracksFromPlaylist");
-                playlistTrack.addAll(Arrays.asList(tracksPage.get().getItems()));
-                tracksPage = Optional.ofNullable(getTracksFromPlaylistRequest(playlistId).execute());
+                System.out.println("###");
+
+                offset += tracksPage.get().getLimit();
+
+                tracksPage = Optional.ofNullable(spotifyApi.getPlaylistsTracks(playlistId).offset(offset).limit(maxLimit)
+                        .market(CountryCode.US).build().execute());
+
+                tracksPage.ifPresent(playlistTrackPaging -> System.out.println(playlistTrackPaging.getNext()));
+
                 tracksPage.ifPresent(playlistTrackPaging -> playlistTrack.addAll(Arrays.asList(playlistTrackPaging.getItems())));
             }
         } catch (IOException | SpotifyWebApiException e) {
@@ -79,13 +99,16 @@ public class SpotifyService {
 
 
     public List<Song> getAllAudioFeaturesFromPlaylist(String id) {
+        System.out.println("^^");
         Map<String, PlaylistTrack> allTracks = convertPlaylistToMap(getTracksFromPlaylist(id));
         List<Song> allSongs = new ArrayList<>();
         throttle(1, "getAllAudioFeaturesFromPlaylist");
         Lists.partition(new ArrayList<>(allTracks.keySet()), 10).forEach(batch -> {
+            System.out.println("$$");;
             throttle(1, "getAllAudioFeaturesFromPlaylist");
             AudioFeatures[] audioFeatures = getAudioFeaturesForSeveralTracks(batch.toArray(new String[0]));
             for (AudioFeatures features : audioFeatures) {
+                System.out.println("%%");
                 if (features != null && allTracks.containsKey(features.getId())) {
                     allSongs.add(new Song(allTracks.get(features.getId()).getTrack(), features));
                 }
@@ -95,6 +118,7 @@ public class SpotifyService {
     }
 
     public List<Song> getAllAudioFeaturesForAllSongs() {
+        System.out.println("@@");
         List<Song> allSongs = new ArrayList<>();
         getAllPlaylists().forEach(playlist -> allSongs.addAll(getAllAudioFeaturesFromPlaylist(playlist.getId())));
         return allSongs;
@@ -113,7 +137,7 @@ public class SpotifyService {
 
     private GetPlaylistsTracksRequest getTracksFromPlaylistRequest(String playlistId) {
 //      .fields("track") .limit(10) .offset(0) .market(CountryCode.SE)
-        return spotifyApi.getPlaylistsTracks(playlistId).market(CountryCode.US).build();
+        return spotifyApi.getPlaylistsTracks(playlistId).limit(100).market(CountryCode.US).build();
     }
 
     private static Map<String, PlaylistTrack> convertPlaylistToMap(List<PlaylistTrack> playlistTrackList) {
