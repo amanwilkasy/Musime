@@ -2,8 +2,8 @@ package com.vyperion.musime.controllers;
 
 import com.vyperion.musime.dto.FeaturesGraph;
 import com.vyperion.musime.dto.Song;
-import com.vyperion.musime.services.SpotifyService;
 import com.vyperion.musime.services.SpotifyGraphService;
+import com.vyperion.musime.services.SpotifyService;
 import com.wrapper.spotify.model_objects.specification.PlaylistSimplified;
 import com.wrapper.spotify.model_objects.specification.PlaylistTrack;
 import com.wrapper.spotify.model_objects.specification.User;
@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @RestController
@@ -50,19 +49,57 @@ public class ApiController {
         return ResponseEntity.ok().body(spotifyService.getAllAudioFeaturesForAllSongs());
     }
 
+    //xgvpcca56pwz4nykvdkd9ovxs
     @GetMapping("getCurrentUser")
     public ResponseEntity<User> getCurrentUser() {
         return ResponseEntity.ok().body(spotifyService.getCurrentUser());
     }
 
 
-    @GetMapping("getConsolidatedFeatures")
-    public ResponseEntity<List<FeaturesGraph>> getConsolidatedFeatures() throws InterruptedException, ExecutionException {
+    //spotifyGraphService
 
-        return null;
+    @GetMapping("getUserGraphFeatures")
+    public ResponseEntity<List<FeaturesGraph>> getUserGraphFeatures() {
+        return ResponseEntity.ok().body(spotifyGraphService.getUserGraphFeatures());
     }
 
+    @GetMapping("generateUserGraphFeatures")
+    public ResponseEntity<List<FeaturesGraph>> generateUserGraphFeatures() {
+        return ResponseEntity.ok().body(spotifyGraphService.generateUserGraphFeatures());
+    }
+
+    @GetMapping("checkIfGraphExists")
+    public ResponseEntity<Boolean> checkIfGraphExists() {
+        return ResponseEntity.ok().body(spotifyGraphService.checkIfGraphExists());
+    }
+
+
+
 }
+
+/*
+{
+    "birthdate": null,
+    "country": "US",
+    "displayName": "akasy",
+    "email": "amanwilk@gmail.com",
+    "externalUrls": {
+        "externalUrls": {
+            "spotify": "https://open.spotify.com/user/xgvpcca56pwz4nykvdkd9ovxs"
+        }
+    },
+    "followers": {
+        "href": null,
+        "total": 1
+    },
+    "href": "https://api.spotify.com/v1/users/xgvpcca56pwz4nykvdkd9ovxs",
+    "id": "xgvpcca56pwz4nykvdkd9ovxs",
+    "images": [],
+    "product": "PREMIUM",
+    "type": "USER",
+    "uri": "spotify:user:xgvpcca56pwz4nykvdkd9ovxs"
+}
+ */
 
 
 

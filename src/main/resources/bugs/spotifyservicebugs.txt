@@ -1,4 +1,0 @@
-there is a bug where looping through the requests using .next to check if you have reached the end
-does not work as it always returns a present string
-this bug applies to all call which have pagination
-luckily the limit is big enough right now to not proc this bug, but this will need a fix

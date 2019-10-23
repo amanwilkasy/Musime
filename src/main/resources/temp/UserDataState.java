@@ -1,4 +1,4 @@
-package com.vyperion.musime.dto;
+package temp;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,7 +26,7 @@ public class UserDataState {
     @Column(name = "id", nullable = false)
     private String id;
 
-    @Column(name = "state", nullable = false)
+    @Column(name = "state", nullable = false, columnDefinition = "varchar(255) default 'NONE'")
     private State state;
 
     @Column(name = "path", nullable = false)

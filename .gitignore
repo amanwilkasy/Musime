@@ -37,3 +37,4 @@ gradlew
 .DS_Store
 bin
 src/main/resources/songdata/*
+src/main/resources/temp/*

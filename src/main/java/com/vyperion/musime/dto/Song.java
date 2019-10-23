@@ -50,7 +50,6 @@ public class Song {
     private float loudness;
     private float speechiness;
     private float tempo;
-    private float timeSignature;
     private float valence;
 
     public Song(Track track, AudioFeatures audioFeature) {
@@ -68,7 +67,6 @@ public class Song {
         this.loudness = audioFeature.getLoudness();
         this.speechiness = audioFeature.getSpeechiness();
         this.tempo = audioFeature.getTempo();
-        this.timeSignature = audioFeature.getTimeSignature();
         this.valence = audioFeature.getValence();
         this.popularity = track.getPopularity();
 
