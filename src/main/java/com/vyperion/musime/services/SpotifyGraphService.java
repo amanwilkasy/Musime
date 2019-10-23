@@ -97,9 +97,11 @@ public class SpotifyGraphService {
     }
 
     private void writeFeaturesGraphToFile(List<FeaturesGraph> featuresGraphs) {
+        System.out.println("hit error on writeFeaturesGraphToFile");
 
         File file = new File(songDir + graphPrefix + spotifyService.getCurrentUser().getId() + ext);
 
+        System.out.println("file should be " + file.getPath());
         try {
             if (file.createNewFile()) {
                 System.out.println("File created");

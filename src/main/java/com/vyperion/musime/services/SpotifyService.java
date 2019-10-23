@@ -55,7 +55,9 @@ public class SpotifyService {
         } catch (IOException | SpotifyWebApiException e) {
             System.out.println("Error:1 " + e.getMessage());
         }
-        return playlists;
+        List<PlaylistSimplified> tempForTest = new ArrayList<>();
+        tempForTest.add(playlists.get(0));
+        return tempForTest;
     }
 
     //need to workout paging
