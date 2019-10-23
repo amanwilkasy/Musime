@@ -5,12 +5,10 @@ import com.neovisionaries.i18n.CountryCode;
 import com.vyperion.musime.dto.Song;
 import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.exceptions.SpotifyWebApiException;
-import com.wrapper.spotify.model_objects.specification.AudioFeatures;
-import com.wrapper.spotify.model_objects.specification.Paging;
-import com.wrapper.spotify.model_objects.specification.PlaylistSimplified;
-import com.wrapper.spotify.model_objects.specification.PlaylistTrack;
+import com.wrapper.spotify.model_objects.specification.*;
 import com.wrapper.spotify.requests.data.playlists.GetPlaylistsTracksRequest;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -25,10 +23,16 @@ public class SpotifyService {
         this.spotifyApi = spotifyApi;
     }
 
-    static void sout(String message){
-        System.out.println(message);
-    }
+    public User getCurrentUser (){
+        Optional<User> user = Optional.empty();
+        try {
+            user = Optional.ofNullable(spotifyApi.getCurrentUsersProfile().build().execute());
+        } catch (IOException | SpotifyWebApiException e) {
+            e.printStackTrace();
+        }
 
+        return user.orElseThrow(RuntimeException::new);
+    }
 
     public List<PlaylistSimplified> getAllPlaylists() {
         System.out.println("**");
@@ -157,6 +161,11 @@ public class SpotifyService {
             System.out.println("System got interrupted in thread sleep");
             System.exit(0);
         }
+    }
+
+    @Bean(name = "CurrentUser")
+    User getCurrent(){
+        return getCurrentUser();
     }
 
 }

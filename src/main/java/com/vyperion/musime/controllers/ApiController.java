@@ -1,11 +1,12 @@
 package com.vyperion.musime.controllers;
 
-import com.vyperion.musime.dto.ConsolidatedFeatures;
+import com.vyperion.musime.dto.FeaturesGraph;
 import com.vyperion.musime.dto.Song;
 import com.vyperion.musime.services.SpotifyService;
-import com.vyperion.musime.services.SpotifyUtility;
+import com.vyperion.musime.services.SpotifyGraphService;
 import com.wrapper.spotify.model_objects.specification.PlaylistSimplified;
 import com.wrapper.spotify.model_objects.specification.PlaylistTrack;
+import com.wrapper.spotify.model_objects.specification.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,11 +23,11 @@ public class ApiController {
 
     private final SpotifyService spotifyService;
 
-    private final SpotifyUtility spotifyUtility;
+    private final SpotifyGraphService spotifyGraphService;
 
-    public ApiController(SpotifyService spotifyService, SpotifyUtility spotifyUtility) {
+    public ApiController(SpotifyService spotifyService, SpotifyGraphService spotifyGraphService) {
         this.spotifyService = spotifyService;
-        this.spotifyUtility = spotifyUtility;
+        this.spotifyGraphService = spotifyGraphService;
     }
 
     @GetMapping("getAllPlaylists")
@@ -49,30 +50,16 @@ public class ApiController {
         return ResponseEntity.ok().body(spotifyService.getAllAudioFeaturesForAllSongs());
     }
 
+    @GetMapping("getCurrentUser")
+    public ResponseEntity<User> getCurrentUser() {
+        return ResponseEntity.ok().body(spotifyService.getCurrentUser());
+    }
+
 
     @GetMapping("getConsolidatedFeatures")
-    public ResponseEntity<List<ConsolidatedFeatures>> getConsolidatedFeatures() throws InterruptedException, ExecutionException {
-        //get all features
-        List<Song> allFeatures = spotifyService.getAllAudioFeaturesForAllSongs();
+    public ResponseEntity<List<FeaturesGraph>> getConsolidatedFeatures() throws InterruptedException, ExecutionException {
 
-        //write them to a file
-        String filePath = SpotifyUtility.writeAllSongFeaturesToFile(allFeatures);
-
-        System.out.println(filePath);
-        System.out.println("222");
-
-        //read them from file
-        List<Song> fileData = SpotifyUtility.readFileIntoSongs(filePath);
-
-        System.out.println("333");
-
-        //set songs
-        spotifyUtility.setSongs(fileData);
-
-        System.out.println("444");
-
-//        return json
-        return ResponseEntity.ok().body(spotifyUtility.getConsolidatedFeatures());
+        return null;
     }
 
 }
