@@ -1,8 +1,6 @@
 package com.vyperion.musime.controllers;
 
-import com.vyperion.musime.dto.FeaturesGraph;
 import com.vyperion.musime.dto.Song;
-import com.vyperion.musime.services.SpotifyGraphService;
 import com.vyperion.musime.services.SpotifyService;
 import com.wrapper.spotify.model_objects.specification.PlaylistSimplified;
 import com.wrapper.spotify.model_objects.specification.PlaylistTrack;
@@ -22,11 +20,15 @@ public class ApiController {
 
     private final SpotifyService spotifyService;
 
-    private final SpotifyGraphService spotifyGraphService;
+//    private final SpotifyGraphService spotifyGraphService;
 
-    public ApiController(SpotifyService spotifyService, SpotifyGraphService spotifyGraphService) {
+//    public ApiController(SpotifyService spotifyService, SpotifyGraphService spotifyGraphService) {
+//        this.spotifyService = spotifyService;
+//        this.spotifyGraphService = spotifyGraphService;
+//    }
+
+    public ApiController(SpotifyService spotifyService) {
         this.spotifyService = spotifyService;
-        this.spotifyGraphService = spotifyGraphService;
     }
 
     @GetMapping("getAllPlaylists")
@@ -58,20 +60,20 @@ public class ApiController {
 
     //spotifyGraphService
 
-    @GetMapping("getUserGraphFeatures")
-    public ResponseEntity<List<FeaturesGraph>> getUserGraphFeatures() {
-        return ResponseEntity.ok().body(spotifyGraphService.getUserGraphFeatures());
-    }
-
-    @GetMapping("generateUserGraphFeatures")
-    public ResponseEntity<List<FeaturesGraph>> generateUserGraphFeatures() {
-        return ResponseEntity.ok().body(spotifyGraphService.generateUserGraphFeatures());
-    }
-
-    @GetMapping("checkIfGraphExists")
-    public ResponseEntity<Boolean> checkIfGraphExists() {
-        return ResponseEntity.ok().body(spotifyGraphService.checkIfGraphExists());
-    }
+//    @GetMapping("getUserGraphFeatures")
+//    public ResponseEntity<List<FeaturesGraph>> getUserGraphFeatures() {
+//        return ResponseEntity.ok().body(spotifyGraphService.getUserGraphFeatures());
+//    }
+//
+//    @GetMapping("generateUserGraphFeatures")
+//    public ResponseEntity<List<FeaturesGraph>> generateUserGraphFeatures() {
+//        return ResponseEntity.ok().body(spotifyGraphService.generateUserGraphFeatures());
+//    }
+//
+//    @GetMapping("checkIfGraphExists")
+//    public ResponseEntity<Boolean> checkIfGraphExists() {
+//        return ResponseEntity.ok().body(spotifyGraphService.checkIfGraphExists());
+//    }
 
 
 
