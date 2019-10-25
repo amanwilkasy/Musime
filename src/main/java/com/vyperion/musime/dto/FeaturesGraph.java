@@ -48,8 +48,3 @@ public class FeaturesGraph {
     }
 
 }
-//    public FeaturesGraph(String feature, Set<Integer> labels, List<Integer> values) {
-//        this.feature = feature;
-//        this.labels = labels.stream().map(String::valueOf).collect(Collectors.toList());
-//        this.values = values;
-//    }

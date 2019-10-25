@@ -24,6 +24,19 @@ public class FeaturesGraphService {
     }
 
     public void saveFeaturesGraph(List<FeaturesGraph> featuresGraph){
-        featuresGraphRepository.saveAll(featuresGraph);
+
+        if (featuresGraph != null && !featuresGraph.isEmpty()){
+            List<FeaturesGraph> exists = getFeaturesGraphsByUserId(featuresGraph.get(0).getUserId());
+            if (exists != null && !exists.isEmpty()){
+                //replace
+                exists = featuresGraph;
+                featuresGraphRepository.saveAll(exists);
+            }else {
+                featuresGraphRepository.saveAll(featuresGraph);
+            }
+        }else{
+            throw new RuntimeException();
+        }
+
     }
 }

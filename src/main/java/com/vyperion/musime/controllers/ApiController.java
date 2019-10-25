@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 
 @Slf4j
@@ -61,10 +63,20 @@ public class ApiController {
     @GetMapping("getFeaturesGraphs")
     public ResponseEntity<List<FeaturesGraph>> getFeaturesGraphsByUserId() {
         List<FeaturesGraph> featuresGraphs = featuresGraphService.getFeaturesGraphsByUserId(spotifyService.getCurrentUser().getId());
-        if (featuresGraphs.isEmpty()){
-            featuresGraphs = spotifyService.generateFeaturesGraphForAllSongs();
-            featuresGraphService.saveFeaturesGraph(featuresGraphs);
-        }
+
+//        if (featuresGraphs.isEmpty()){
+//            Instant start = Instant.now();
+//            featuresGraphs = spotifyService.generateFeaturesGraphForAllSongs();
+//            Instant end = Instant.now();
+//            System.out.println(Duration.between(start, end).toMillis());
+//            featuresGraphService.saveFeaturesGraph(featuresGraphs);
+//            //64445
+//        }
+        Instant start = Instant.now();
+        featuresGraphs = spotifyService.generateFeaturesGraphForAllSongs();
+        Instant end = Instant.now();
+        System.out.println(Duration.between(start, end).toMillis());
+        featuresGraphService.saveFeaturesGraph(featuresGraphs);
         return ResponseEntity.ok().body(featuresGraphs);
     }
 
