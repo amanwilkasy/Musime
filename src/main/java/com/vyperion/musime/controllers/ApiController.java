@@ -1,6 +1,8 @@
 package com.vyperion.musime.controllers;
 
+import com.vyperion.musime.dto.FeaturesGraph;
 import com.vyperion.musime.dto.Song;
+import com.vyperion.musime.services.FeaturesGraphService;
 import com.vyperion.musime.services.SpotifyService;
 import com.wrapper.spotify.model_objects.specification.PlaylistSimplified;
 import com.wrapper.spotify.model_objects.specification.PlaylistTrack;
@@ -19,16 +21,11 @@ import java.util.List;
 public class ApiController {
 
     private final SpotifyService spotifyService;
+    private final FeaturesGraphService featuresGraphService;
 
-//    private final SpotifyGraphService spotifyGraphService;
-
-//    public ApiController(SpotifyService spotifyService, SpotifyGraphService spotifyGraphService) {
-//        this.spotifyService = spotifyService;
-//        this.spotifyGraphService = spotifyGraphService;
-//    }
-
-    public ApiController(SpotifyService spotifyService) {
+    public ApiController(SpotifyService spotifyService, FeaturesGraphService featuresGraphService) {
         this.spotifyService = spotifyService;
+        this.featuresGraphService = featuresGraphService;
     }
 
     @GetMapping("getAllPlaylists")
@@ -60,20 +57,17 @@ public class ApiController {
 
     //spotifyGraphService
 
-//    @GetMapping("getUserGraphFeatures")
-//    public ResponseEntity<List<FeaturesGraph>> getUserGraphFeatures() {
-//        return ResponseEntity.ok().body(spotifyGraphService.getUserGraphFeatures());
-//    }
-//
-//    @GetMapping("generateUserGraphFeatures")
-//    public ResponseEntity<List<FeaturesGraph>> generateUserGraphFeatures() {
-//        return ResponseEntity.ok().body(spotifyGraphService.generateUserGraphFeatures());
-//    }
-//
-//    @GetMapping("checkIfGraphExists")
-//    public ResponseEntity<Boolean> checkIfGraphExists() {
-//        return ResponseEntity.ok().body(spotifyGraphService.checkIfGraphExists());
-//    }
+    //******
+    @GetMapping("getFeaturesGraphs")
+    public ResponseEntity<List<FeaturesGraph>> getFeaturesGraphsByUserId() {
+        List<FeaturesGraph> featuresGraphs = featuresGraphService.getFeaturesGraphsByUserId(spotifyService.getCurrentUser().getId());
+        if (featuresGraphs.isEmpty()){
+            featuresGraphs = spotifyService.generateFeaturesGraphForAllSongs();
+            featuresGraphService.saveFeaturesGraph(featuresGraphs);
+        }
+        return ResponseEntity.ok().body(featuresGraphs);
+    }
+
 
 
 

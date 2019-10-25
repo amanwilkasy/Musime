@@ -56,8 +56,7 @@ public class SpotifyService {
         } catch (IOException | SpotifyWebApiException e) {
             System.out.println("Error:1 " + e.getMessage());
         }
-        List<PlaylistSimplified> tempForTest = new ArrayList<>();
-        tempForTest.add(playlists.get(0));
+        List<PlaylistSimplified> tempForTest = new ArrayList<>(playlists.subList(0, 10));
         return tempForTest;
     }
 
@@ -75,7 +74,6 @@ public class SpotifyService {
 
             while (tracksPage.isPresent() && tracksPage.get().getNext() != null) {
                 throttle(1, "getTracksFromPlaylist");
-                System.out.println("###");
 
                 offset += tracksPage.get().getLimit();
 
@@ -98,10 +96,11 @@ public class SpotifyService {
 
 
     public List<Song> getAllAudioFeaturesFromPlaylist(String id) {
+        final int batchSize = 30;
         Map<String, PlaylistTrack> allTracks = convertPlaylistToMap(getTracksFromPlaylist(id));
         List<Song> allSongs = new ArrayList<>();
         throttle(1, "getAllAudioFeaturesFromPlaylist");
-        Lists.partition(new ArrayList<>(allTracks.keySet()), 10).forEach(batch -> {
+        Lists.partition(new ArrayList<>(allTracks.keySet()), batchSize).forEach(batch -> {
             throttle(1, "getAllAudioFeaturesFromPlaylist");
             AudioFeatures[] audioFeatures = getAudioFeaturesForSeveralTracks(batch.toArray(new String[0]));
             for (AudioFeatures features : audioFeatures) {
@@ -191,7 +190,8 @@ public class SpotifyService {
         return graph;
     }
 
-    private static List<FeaturesGraph> convertSongsToFeaturesGraph(List<Song> songs) {
+    private List<FeaturesGraph> convertSongsToFeaturesGraph(List<Song> songs) {
+        String userId = getCurrentUser().getId();
         List<FeaturesGraph> consolidated = new ArrayList<>();
         TreeMap<Integer, Integer> getPopularityMap = new TreeMap<>();
         TreeMap<Integer, Integer> getEnergyMap = new TreeMap<>();
@@ -235,18 +235,18 @@ public class SpotifyService {
         });
 
 
-        consolidated.add(new FeaturesGraph("Tempo", tempoDescription, consolidate(getTempoMap)));
-        consolidated.add(new FeaturesGraph("Popularity", popularityDescription, consolidate(getPopularityMap)));
-        consolidated.add(new FeaturesGraph("Energy", energyDescription, consolidate(getEnergyMap)));
-        consolidated.add(new FeaturesGraph("Acousticness", acousticnessDescription, consolidate(getAcousticnessMap)));
-        consolidated.add(new FeaturesGraph("Key", keyDescription, consolidate(getKeyMap)));
-        consolidated.add(new FeaturesGraph("Valence", valanceDescription, consolidate(getValenceMap)));
-        consolidated.add(new FeaturesGraph("Liveness", livenessDescription, consolidate(getLivenessMap)));
-        consolidated.add(new FeaturesGraph("Instrumentalness", instrumentalnessDescription, consolidate(getInstrumentalnessMap)));
-        consolidated.add(new FeaturesGraph("Loudness", loudnessDescription, consolidate(getLoudnessMap)));
-        consolidated.add(new FeaturesGraph("Speechiness", speechinessDescription, consolidate(getSpeechinessMap)));
-        consolidated.add(new FeaturesGraph("Danceability", danceabilityDescription, consolidate(getDanceabilityMap)));
-        consolidated.add(new FeaturesGraph("Duration", durationDescription, consolidate(getDurationMsMap)));
+        consolidated.add(new FeaturesGraph(userId,"Tempo", tempoDescription, consolidate(getTempoMap)));
+        consolidated.add(new FeaturesGraph(userId,"Popularity", popularityDescription, consolidate(getPopularityMap)));
+        consolidated.add(new FeaturesGraph(userId,"Energy", energyDescription, consolidate(getEnergyMap)));
+        consolidated.add(new FeaturesGraph(userId,"Acousticness", acousticnessDescription, consolidate(getAcousticnessMap)));
+        consolidated.add(new FeaturesGraph(userId,"Key", keyDescription, consolidate(getKeyMap)));
+        consolidated.add(new FeaturesGraph(userId,"Valence", valanceDescription, consolidate(getValenceMap)));
+        consolidated.add(new FeaturesGraph(userId,"Liveness", livenessDescription, consolidate(getLivenessMap)));
+        consolidated.add(new FeaturesGraph(userId,"Instrumentalness", instrumentalnessDescription, consolidate(getInstrumentalnessMap)));
+        consolidated.add(new FeaturesGraph(userId,"Loudness", loudnessDescription, consolidate(getLoudnessMap)));
+        consolidated.add(new FeaturesGraph(userId,"Speechiness", speechinessDescription, consolidate(getSpeechinessMap)));
+        consolidated.add(new FeaturesGraph(userId,"Danceability", danceabilityDescription, consolidate(getDanceabilityMap)));
+        consolidated.add(new FeaturesGraph(userId,"Duration", durationDescription, consolidate(getDurationMsMap)));
         return consolidated;
     }
 

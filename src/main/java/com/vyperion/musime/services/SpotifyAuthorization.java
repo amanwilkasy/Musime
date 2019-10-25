@@ -19,8 +19,10 @@ public class SpotifyAuthorization {
     private String code;
     private static final String clientId = "19f19dbaf333441b95d99d89515e8af5";
     private static final String clientSecret = "74e2b03c22824ee7801dc9936b8854cf";
+    //    private static final URI redirectUri = SpotifyHttpManager.makeUri("https://musime.herokuapp.com/spotify-auth/callback");
     private static final URI redirectUri =
-            SpotifyHttpManager.makeUri("https://musime.herokuapp.com/spotify-auth/callback");
+            SpotifyHttpManager.makeUri("http://d47c28a7.ngrok.io/spotify-auth/callback");
+
     private static final String scopes = "user-read-private,user-read-email,playlist-read-private,user-top-read";
     private SpotifyApi spotifyApi = new SpotifyApi.Builder()
             .setClientId(clientId)
@@ -85,7 +87,7 @@ public class SpotifyAuthorization {
     }
 
     @Bean(name = "SpotifyApi")
-    SpotifyApi getSpotifyApi(){
+    SpotifyApi getSpotifyApi() {
         return this.spotifyApi;
     }
 
