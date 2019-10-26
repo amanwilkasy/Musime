@@ -57,9 +57,16 @@ public class ApiController {
 
     @GetMapping("getFeaturesGraphs")
     public ResponseEntity<UserFeatureGraphClient> getFeaturesGraphsByUserId() {
-        UserFeatureGraph userFeatureGraph = spotifyService.generateFeaturesGraphForAllSongs();
-        userFeatureGraphService.saveFeaturesGraph(userFeatureGraph);
-        return ResponseEntity.ok().body(new UserFeatureGraphClient(userFeatureGraph));
+        String id = spotifyService.getCurrentUser().getId();
+
+        if (userFeatureGraphService.userFeatureGraphExists(id)){
+            return ResponseEntity.ok().body(new UserFeatureGraphClient(userFeatureGraphService.getFeaturesGraphsByUserId(id)));
+        }else{
+            UserFeatureGraph userFeatureGraph = spotifyService.generateFeaturesGraphForAllSongs();
+            userFeatureGraphService.saveFeaturesGraph(userFeatureGraph);
+            return ResponseEntity.ok().body(new UserFeatureGraphClient(userFeatureGraph));
+        }
+
     }
 
 

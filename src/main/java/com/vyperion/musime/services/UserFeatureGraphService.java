@@ -18,8 +18,12 @@ public class UserFeatureGraphService {
         return userFeatureGraphRepository.getUserFeatureGraphByUserId(id);
     }
 
+    public boolean userFeatureGraphExists(String id){
+        return userFeatureGraphRepository.existsByUserId(id);
+    }
+
     public void saveFeaturesGraph(UserFeatureGraph userFeatureGraph) {
-        if (!userFeatureGraphRepository.existsByUserId(userFeatureGraph.getUserId())) {
+        if (!userFeatureGraphExists(userFeatureGraph.getUserId())) {
             userFeatureGraphRepository.save(userFeatureGraph);
         } else {
             UserFeatureGraph exists = getFeaturesGraphsByUserId(userFeatureGraph.getUserId());
