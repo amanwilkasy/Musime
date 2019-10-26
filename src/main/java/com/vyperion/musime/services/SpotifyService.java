@@ -138,7 +138,11 @@ public class SpotifyService {
 
     private static Map<String, PlaylistTrack> convertPlaylistToMap(List<PlaylistTrack> playlistTrackList) {
         Map<String, PlaylistTrack> map = new HashMap<>();
-        playlistTrackList.forEach(playlistTrack -> map.put(playlistTrack.getTrack().getId(), playlistTrack));
+        for (PlaylistTrack playlistTrack : playlistTrackList) {
+            if (playlistTrack != null){
+                map.put(playlistTrack.getTrack().getId(), playlistTrack);
+            }
+        }
         return map;
     }
 
