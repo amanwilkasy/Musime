@@ -30,7 +30,9 @@ public class SpotifyAuthController {
     @GetMapping("callback")
     public ResponseEntity<String> callback(@RequestParam("code") String code) {
         spotifyAuthorization.setCode(code);
-        return ResponseEntity.ok().body("Successful Login");
+        AuthorizationCodeCredentials creds = spotifyAuthorization.getAccessCredentials();
+        System.out.println("Token: ".concat(creds.getAccessToken()));
+        return ResponseEntity.ok().body("Successful Login " + creds.getAccessToken());
     }
 
     @GetMapping("refresh")
