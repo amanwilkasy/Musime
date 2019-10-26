@@ -13,16 +13,25 @@ import javax.persistence.*;
 @Table(name = "UserFeatureGraph")
 public class UserFeatureGraph {
 
-        @Id
-        @Column(name = "id", nullable = false)
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private int id;
+    @Id
+    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
-        @Column(name = "userId", nullable = false)
-        private String userId;
+    @Column(name = "userId", nullable = false)
+    private String userId;
 
-        @Column(name = "featureGraph", nullable = false)
-        private byte[] featureGraph;
+    @Column(name = "userEmail", nullable = false)
+    private String userEmail;
+
+    @Column(name = "featureGraph", nullable = false)
+    private byte[] featureGraph;
+
+    public UserFeatureGraph(String userId, String userEmail, byte[] featureGraph) {
+        this.userId = userId;
+        this.userEmail = userEmail;
+        this.featureGraph = featureGraph;
+    }
 }
 
 

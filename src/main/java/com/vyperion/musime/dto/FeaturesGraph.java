@@ -4,47 +4,27 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.TreeMap;
+import java.io.Serializable;
+import java.util.*;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-@Table(name = "FeaturesGraph")
-public class FeaturesGraph {
+public class FeaturesGraph implements Serializable {
 
-    @Id
-    @Column(name = "id", nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private String name;
 
-    @Column(name = "userId", nullable = false)
-    private String userId;
-
-    @Column(name = "feature", nullable = false)
-    private String feature;
-
-    @Column(name = "description", nullable = false, length = 1000)
     private String description;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @Column(name = "labels", nullable = false)
-    private Set<Integer> labels;
+    private List<Integer> labels;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @Column(name = "values", nullable = false)
-    private Set<Integer> values;
+    private List<Integer> values;
 
-    public FeaturesGraph(String userId, String feature,String description, TreeMap<Integer, Integer> consolidated) {
-        this.userId = userId;
-        this.feature = feature;
+    public FeaturesGraph(String name, String description, TreeMap<Integer, Integer> consolidated) {
+        this.name = name;
         this.description = description;
-        this.labels = consolidated.keySet();
-//        .keySet().stream().map(String::valueOf).collect(Collectors.toSet());
-        this.values = new HashSet<>(consolidated.values());
+        this.labels = new ArrayList<>(consolidated.keySet());
+        this.values = new ArrayList<>(consolidated.values());
     }
 
 }

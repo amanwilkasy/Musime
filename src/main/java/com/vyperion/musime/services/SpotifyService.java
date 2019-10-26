@@ -2,16 +2,20 @@ package com.vyperion.musime.services;
 
 import com.google.common.collect.Lists;
 import com.neovisionaries.i18n.CountryCode;
+import com.vyperion.musime.dto.FeatureDescriptions;
 import com.vyperion.musime.dto.FeaturesGraph;
 import com.vyperion.musime.dto.Song;
+import com.vyperion.musime.dto.UserFeatureGraph;
 import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.exceptions.SpotifyWebApiException;
 import com.wrapper.spotify.model_objects.specification.*;
 import com.wrapper.spotify.requests.data.playlists.GetPlaylistsTracksRequest;
+import org.hibernate.internal.util.SerializationHelper;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.*;
 
 @Service
@@ -43,7 +47,7 @@ public class SpotifyService {
             playlistPage.ifPresent(playlistPaging -> playlists.addAll(Arrays.asList(playlistPaging.getItems())));
 
             while (playlistPage.isPresent() && playlistPage.get().getNext() != null) {
-                throttle(1, "getAllPlaylists");
+                throttle("getAllPlaylists");
 
                 offset += playlistPage.get().getLimit();
 
@@ -54,12 +58,9 @@ public class SpotifyService {
         } catch (IOException | SpotifyWebApiException e) {
             System.out.println("Error:1 " + e.getMessage());
         }
-//        List<PlaylistSimplified> tempForTest = new ArrayList<>(playlists.subList(0, 10));
         return playlists;
     }
 
-    //need to workout paging
-    //37i9dQZF1DWUgX5cUT0GbU
     public List<PlaylistTrack> getTracksFromPlaylist(String playlistId) {
         List<PlaylistTrack> playlistTrack = new ArrayList<>();
         Optional<Paging<PlaylistTrack>> tracksPage;
@@ -70,7 +71,7 @@ public class SpotifyService {
             tracksPage.ifPresent(playlistTrackPaging -> playlistTrack.addAll(Arrays.asList(playlistTrackPaging.getItems())));
 
             while (tracksPage.isPresent() && tracksPage.get().getNext() != null) {
-                throttle(1, "getTracksFromPlaylist");
+                throttle("getTracksFromPlaylist");
 
                 offset += tracksPage.get().getLimit();
 
@@ -113,17 +114,15 @@ public class SpotifyService {
         return allSongs;
     }
 
-    public List<FeaturesGraph> generateFeaturesGraphForAllSongs() {
-        return convertSongsToFeaturesGraph(getAllAudioFeaturesForAllSongs());
+    public UserFeatureGraph generateFeaturesGraphForAllSongs() {
+        return convertSongsToUserFeatureGraph(getAllAudioFeaturesForAllSongs());
     }
-
-
 
 
     public AudioFeatures[] getAudioFeaturesForSeveralTracks(String[] ids) {
         Optional<AudioFeatures[]> audioFeatures = Optional.empty();
         try {
-            throttle(1, "getAudioFeaturesForSeveralTracks");
+            throttle("getAudioFeaturesForSeveralTracks");
             audioFeatures = Optional.ofNullable(spotifyApi.getAudioFeaturesForSeveralTracks(ids).build().execute());
         } catch (IOException | SpotifyWebApiException e) {
             System.out.println("Error:4 " + e.getMessage());
@@ -139,20 +138,17 @@ public class SpotifyService {
 
     private static Map<String, PlaylistTrack> convertPlaylistToMap(List<PlaylistTrack> playlistTrackList) {
         Map<String, PlaylistTrack> map = new HashMap<>();
-        playlistTrackList.forEach(playlistTrack -> {
-            map.put(playlistTrack.getTrack().getId(), playlistTrack);
-        });
+        playlistTrackList.forEach(playlistTrack -> map.put(playlistTrack.getTrack().getId(), playlistTrack));
         return map;
     }
 
-    private static void throttle(int seconds, String message) {
+    private static void throttle(String message) {
         try {
-            Thread.sleep(seconds * 1000);
-            System.out.println(message.concat(" is waiting ".concat(String.valueOf(seconds))));
+            Thread.sleep(1000);
+            System.out.println(message.concat(" is waiting ".concat(String.valueOf(1))));
         } catch (InterruptedException e) {
             e.printStackTrace();
             System.out.println("System got interrupted in thread sleep");
-            System.exit(0);
         }
     }
 
@@ -186,9 +182,9 @@ public class SpotifyService {
         return graph;
     }
 
-    private List<FeaturesGraph> convertSongsToFeaturesGraph(List<Song> songs) {
-        String userId = getCurrentUser().getId();
-        List<FeaturesGraph> consolidated = new ArrayList<>();
+    private UserFeatureGraph convertSongsToUserFeatureGraph(List<Song> songs) {
+        User user = getCurrentUser();
+        List<FeaturesGraph> features = new ArrayList<>();
         TreeMap<Integer, Integer> getPopularityMap = new TreeMap<>();
         TreeMap<Integer, Integer> getEnergyMap = new TreeMap<>();
         TreeMap<Integer, Integer> getInstrumentalnessMap = new TreeMap<>();
@@ -230,35 +226,21 @@ public class SpotifyService {
 
         });
 
+        features.add(new FeaturesGraph("Tempo", FeatureDescriptions.tempo, consolidate(getTempoMap)));
+        features.add(new FeaturesGraph("Popularity", FeatureDescriptions.popularity, consolidate(getPopularityMap)));
+        features.add(new FeaturesGraph("Energy", FeatureDescriptions.energy, consolidate(getEnergyMap)));
+        features.add(new FeaturesGraph("Acousticness", FeatureDescriptions.acousticness, consolidate(getAcousticnessMap)));
+        features.add(new FeaturesGraph("Key", FeatureDescriptions.key, consolidate(getKeyMap)));
+        features.add(new FeaturesGraph("Valence", FeatureDescriptions.valance, consolidate(getValenceMap)));
+        features.add(new FeaturesGraph("Liveness", FeatureDescriptions.liveness, consolidate(getLivenessMap)));
+        features.add(new FeaturesGraph("Instrumentalness", FeatureDescriptions.instrumentalness, consolidate(getInstrumentalnessMap)));
+        features.add(new FeaturesGraph("Loudness", FeatureDescriptions.loudness, consolidate(getLoudnessMap)));
+        features.add(new FeaturesGraph("Speechiness", FeatureDescriptions.speechiness, consolidate(getSpeechinessMap)));
+        features.add(new FeaturesGraph("Danceability", FeatureDescriptions.danceability, consolidate(getDanceabilityMap)));
+        features.add(new FeaturesGraph("Duration", FeatureDescriptions.duration, consolidate(getDurationMsMap)));
 
-        consolidated.add(new FeaturesGraph(userId,"Tempo", tempoDescription, consolidate(getTempoMap)));
-        consolidated.add(new FeaturesGraph(userId,"Popularity", popularityDescription, consolidate(getPopularityMap)));
-        consolidated.add(new FeaturesGraph(userId,"Energy", energyDescription, consolidate(getEnergyMap)));
-        consolidated.add(new FeaturesGraph(userId,"Acousticness", acousticnessDescription, consolidate(getAcousticnessMap)));
-        consolidated.add(new FeaturesGraph(userId,"Key", keyDescription, consolidate(getKeyMap)));
-        consolidated.add(new FeaturesGraph(userId,"Valence", valanceDescription, consolidate(getValenceMap)));
-        consolidated.add(new FeaturesGraph(userId,"Liveness", livenessDescription, consolidate(getLivenessMap)));
-        consolidated.add(new FeaturesGraph(userId,"Instrumentalness", instrumentalnessDescription, consolidate(getInstrumentalnessMap)));
-        consolidated.add(new FeaturesGraph(userId,"Loudness", loudnessDescription, consolidate(getLoudnessMap)));
-        consolidated.add(new FeaturesGraph(userId,"Speechiness", speechinessDescription, consolidate(getSpeechinessMap)));
-        consolidated.add(new FeaturesGraph(userId,"Danceability", danceabilityDescription, consolidate(getDanceabilityMap)));
-        consolidated.add(new FeaturesGraph(userId,"Duration", durationDescription, consolidate(getDurationMsMap)));
-        return consolidated;
+        return new UserFeatureGraph(user.getId(), user.getEmail(), SerializationHelper.serialize((Serializable) features));
+
     }
-
-    private static final String instrumentalnessDescription = "Predicts whether a track contains no vocals. “Ooh” and “aah” sounds are treated as instrumental in this context. Rap or spoken word tracks are clearly “vocal”. The closer the instrumentalness value is to 1.0, the greater likelihood the track contains no vocal content. Values above 0.5 are intended to represent instrumental tracks, but confidence is higher as the value approaches 1.0.";
-    private static final String acousticnessDescription = " A confidence measure from 0.0 to 1.0 of whether the track is acoustic. 1.0 represents high confidence the track is acoustic.";
-    private static final String livenessDescription = "Detects the presence of an audience in the recording. Higher liveness values represent an increased probability that the track was performed live. A value above 0.8 provides strong likelihood that the track is live.";
-    private static final String energyDescription = "Energy is a measure from 0.0 to 1.0 and represents a perceptual measure of intensity and activity. Typically, energetic tracks feel fast, loud, and noisy. For example, death metal has high energy, while a Bach prelude scores low on the scale. Perceptual features contributing to this attribute include dynamic range, perceived loudness, timbre, onset rate, and general entropy.";
-    private static final String danceabilityDescription = "Danceability describes how suitable a track is for dancing based on a combination of musical elements including tempo, rhythm stability, beat strength, and overall regularity. A value of 0.0 is least danceable and 1.0 is most danceable.";
-    private static final String valanceDescription = "A measure from 0.0 to 1.0 describing the musical positiveness conveyed by a track. Tracks with high valence sound more positive (e.g. happy, cheerful, euphoric), while tracks with low valence sound more negative (e.g. sad, depressed, angry).";
-    private static final String durationDescription = "The duration of the track in milliseconds";
-    private static final String keyDescription = "The estimated overall key of the track. Integers map to pitches using standard Pitch Class notation.";
-    private static final String loudnessDescription = "The overall loudness of a track in decibels (dB). Loudness values are averaged across the entire track and are useful for comparing relative loudness of tracks. Loudness is the quality of a sound that is the primary psychological correlate of physical strength (amplitude). Values typical range between -60 and 0 db.";
-    private static final String speechinessDescription = "Speechiness detects the presence of spoken words in a track. The more exclusively speech-like the recording (e.g. talk show, audio book, poetry), the closer to 1.0 the attribute value. Values above 0.66 describe tracks that are probably made entirely of spoken words. Values between 0.33 and 0.66 describe tracks that may contain both music and speech, either in sections or layered, including such cases as rap music. Values below 0.33 most likely represent music and other non-speech-like tracks.";
-    private static final String tempoDescription = "The overall estimated tempo of a track in beats per minute (BPM). In musical terminology, tempo is the speed or pace of a given piece and derives directly from the average beat duration. ";
-    private static final String popularityDescription = "The popularity of a track is a value between 0 and 100, with 100 being the most popular. The popularity is calculated by algorithm and is based, in the most part, on the total number of plays the track has had and how recent those plays are.\n" +
-            "Generally speaking, songs that are being played a lot now will have a higher popularity than songs that were played a lot in the past.";
-
 
 }

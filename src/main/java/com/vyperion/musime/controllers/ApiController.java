@@ -1,9 +1,10 @@
 package com.vyperion.musime.controllers;
 
-import com.vyperion.musime.dto.FeaturesGraph;
 import com.vyperion.musime.dto.Song;
-import com.vyperion.musime.services.FeaturesGraphService;
+import com.vyperion.musime.dto.UserFeatureGraph;
+import com.vyperion.musime.dto.UserFeatureGraphClient;
 import com.vyperion.musime.services.SpotifyService;
+import com.vyperion.musime.services.UserFeatureGraphService;
 import com.wrapper.spotify.model_objects.specification.PlaylistSimplified;
 import com.wrapper.spotify.model_objects.specification.PlaylistTrack;
 import com.wrapper.spotify.model_objects.specification.User;
@@ -13,8 +14,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.util.List;
 
 @Slf4j
@@ -23,11 +22,11 @@ import java.util.List;
 public class ApiController {
 
     private final SpotifyService spotifyService;
-    private final FeaturesGraphService featuresGraphService;
+    private final UserFeatureGraphService userFeatureGraphService;
 
-    public ApiController(SpotifyService spotifyService, FeaturesGraphService featuresGraphService) {
+    public ApiController(SpotifyService spotifyService, UserFeatureGraphService userFeatureGraphService) {
         this.spotifyService = spotifyService;
-        this.featuresGraphService = featuresGraphService;
+        this.userFeatureGraphService = userFeatureGraphService;
     }
 
     @GetMapping("getAllPlaylists")
@@ -50,64 +49,22 @@ public class ApiController {
         return ResponseEntity.ok().body(spotifyService.getAllAudioFeaturesForAllSongs());
     }
 
-    //xgvpcca56pwz4nykvdkd9ovxs
     @GetMapping("getCurrentUser")
     public ResponseEntity<User> getCurrentUser() {
         return ResponseEntity.ok().body(spotifyService.getCurrentUser());
     }
 
 
-    //spotifyGraphService
-
-    //******
     @GetMapping("getFeaturesGraphs")
-    public ResponseEntity<List<FeaturesGraph>> getFeaturesGraphsByUserId() {
-        List<FeaturesGraph> featuresGraphs = featuresGraphService.getFeaturesGraphsByUserId(spotifyService.getCurrentUser().getId());
-
-//        if (featuresGraphs.isEmpty()){
-//            Instant start = Instant.now();
-//            featuresGraphs = spotifyService.generateFeaturesGraphForAllSongs();
-//            Instant end = Instant.now();
-//            System.out.println(Duration.between(start, end).toMillis());
-//            featuresGraphService.saveFeaturesGraph(featuresGraphs);
-//            //64445
-//        }
-        Instant start = Instant.now();
-        featuresGraphs = spotifyService.generateFeaturesGraphForAllSongs();
-        Instant end = Instant.now();
-        System.out.println(Duration.between(start, end).toMillis());
-        featuresGraphService.saveFeaturesGraph(featuresGraphs);
-        return ResponseEntity.ok().body(featuresGraphs);
+    public ResponseEntity<UserFeatureGraphClient> getFeaturesGraphsByUserId() {
+        UserFeatureGraph userFeatureGraph = spotifyService.generateFeaturesGraphForAllSongs();
+        userFeatureGraphService.saveFeaturesGraph(userFeatureGraph);
+        return ResponseEntity.ok().body(new UserFeatureGraphClient(userFeatureGraph));
     }
 
 
-
-
 }
 
-/*
-{
-    "birthdate": null,
-    "country": "US",
-    "displayName": "akasy",
-    "email": "amanwilk@gmail.com",
-    "externalUrls": {
-        "externalUrls": {
-            "spotify": "https://open.spotify.com/user/xgvpcca56pwz4nykvdkd9ovxs"
-        }
-    },
-    "followers": {
-        "href": null,
-        "total": 1
-    },
-    "href": "https://api.spotify.com/v1/users/xgvpcca56pwz4nykvdkd9ovxs",
-    "id": "xgvpcca56pwz4nykvdkd9ovxs",
-    "images": [],
-    "product": "PREMIUM",
-    "type": "USER",
-    "uri": "spotify:user:xgvpcca56pwz4nykvdkd9ovxs"
-}
- */
 
 
 

@@ -1,0 +1,75 @@
+spring.datasource.url=jdbc:mysql://localhost:3306/musime?serverTimezone=UTC
+spring.datasource.username=root
+spring.datasource.password=Temp1234
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL5InnoDBDialect
+spring.jpa.hibernate.ddl-auto=update
+
+spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true
+
+
+//xgvpcca56pwz4nykvdkd9ovxs
+spotify user id
+
+//37i9dQZF1DWUgX5cUT0GbU
+playlist id
+
+playlist method
+
+//        List<PlaylistSimplified> tempForTest = new ArrayList<>(playlists.subList(0, 1));
+
+local test
+    private static final URI redirectUri =
+            SpotifyHttpManager.makeUri("http://77388c01.ngrok.io/spotify-auth/callback");
+
+
+set to string
+
+//        .keySet().stream().map(String::valueOf).collect(Collectors.toSet());
+
+print token
+        AuthorizationCodeCredentials creds = spotifyAuthorization.getAccessCredentials();
+        System.out.println("Token: ".concat(creds.getAccessToken()));
+
+api measure
+        Instant start = Instant.now();
+        UserFeatureGraph userFeatureGraph = spotifyService.generateFeaturesGraphForAllSongs();
+        Instant end = Instant.now();
+        System.out.println(Duration.between(start, end).toMillis());
+
+
+ user obj
+ /*
+ {
+     "birthdate": null,
+     "country": "US",
+     "displayName": "akasy",
+     "email": "amanwilk@gmail.com",
+     "externalUrls": {
+         "externalUrls": {
+             "spotify": "https://open.spotify.com/user/xgvpcca56pwz4nykvdkd9ovxs"
+         }
+     },
+     "followers": {
+         "href": null,
+         "total": 1
+     },
+     "href": "https://api.spotify.com/v1/users/xgvpcca56pwz4nykvdkd9ovxs",
+     "id": "xgvpcca56pwz4nykvdkd9ovxs",
+     "images": [],
+     "product": "PREMIUM",
+     "type": "USER",
+     "uri": "spotify:user:xgvpcca56pwz4nykvdkd9ovxs"
+ }
+  */
+
+spring.datasource.url=${POSTGRES_URL:jdbc:postgresql://ec2-107-21-201-238.compute-1.amazonaws.com:5432/d5resnsp62v5b8}
+spring.datasource.username=${POSTGRES_USERNAME:fhbmzubcbkjaoe}
+spring.datasource.password=${POSTGRES_PASSWORD:7266f593a105fa0328b57c0bf7b0738db5fb4deee12a228b8b48829727bf7675}
+
+#drop n create table again, good for testing, comment this in production
+#spring.jpa.hibernate.ddl-auto=create
+
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.hibernate.ddl-auto=update
+
+spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true
