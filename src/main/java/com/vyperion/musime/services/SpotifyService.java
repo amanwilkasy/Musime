@@ -58,7 +58,8 @@ public class SpotifyService {
         } catch (IOException | SpotifyWebApiException e) {
             System.out.println("Error:1 " + e.getMessage());
         }
-        return playlists;
+        List<PlaylistSimplified> tempForTest = new ArrayList<>(playlists.subList(0, 20));
+        return tempForTest;
     }
 
     public List<PlaylistTrack> getTracksFromPlaylist(String playlistId) {

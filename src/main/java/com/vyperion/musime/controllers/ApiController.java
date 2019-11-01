@@ -1,8 +1,11 @@
 package com.vyperion.musime.controllers;
 
+import com.vyperion.musime.dto.ProcessState;
 import com.vyperion.musime.dto.Song;
 import com.vyperion.musime.dto.UserFeatureGraph;
 import com.vyperion.musime.dto.UserFeatureGraphClient;
+import com.vyperion.musime.services.ProcessFeatureGraph;
+import com.vyperion.musime.services.ProcessStateService;
 import com.vyperion.musime.services.SpotifyService;
 import com.vyperion.musime.services.UserFeatureGraphService;
 import com.wrapper.spotify.model_objects.specification.PlaylistSimplified;
@@ -23,10 +26,14 @@ public class ApiController {
 
     private final SpotifyService spotifyService;
     private final UserFeatureGraphService userFeatureGraphService;
+    private final ProcessStateService processStateService;
+    private final ProcessFeatureGraph processFeatureGraph;
 
-    public ApiController(SpotifyService spotifyService, UserFeatureGraphService userFeatureGraphService) {
+    public ApiController(SpotifyService spotifyService, UserFeatureGraphService userFeatureGraphService, ProcessStateService processStateService, ProcessFeatureGraph processFeatureGraph) {
         this.spotifyService = spotifyService;
         this.userFeatureGraphService = userFeatureGraphService;
+        this.processStateService = processStateService;
+        this.processFeatureGraph = processFeatureGraph;
     }
 
     @GetMapping("getAllPlaylists")
@@ -58,19 +65,49 @@ public class ApiController {
     @GetMapping("getFeaturesGraphs")
     public ResponseEntity<UserFeatureGraphClient> getFeaturesGraphsByUserId() {
         String id = spotifyService.getCurrentUser().getId();
+        ProcessState processState = processStateService.getProcessStateByUserId(id);
+        if (processState == null) {
+            processState = new ProcessState(id, ProcessState.State.NONE);
+        }
+        ProcessState.State state = processState.getState();
+        ResponseEntity<UserFeatureGraphClient> responseEntity = null;
 
-        if (userFeatureGraphService.userFeatureGraphExists(id)){
-            return ResponseEntity.ok().body(new UserFeatureGraphClient(userFeatureGraphService.getFeaturesGraphsByUserId(id)));
-        }else{
-            UserFeatureGraph userFeatureGraph = spotifyService.generateFeaturesGraphForAllSongs();
-            userFeatureGraphService.saveFeaturesGraph(userFeatureGraph);
-            return ResponseEntity.ok().body(new UserFeatureGraphClient(userFeatureGraph));
+        log.info("started master get all playlist data");
+
+        if (state.equals(ProcessState.State.NONE)) {
+            log.info("hit ProcessState.State.NONE");
+
+            processState.setState(ProcessState.State.PROCESSING);
+            processStateService.saveProcessStateByUserId(processState);
+
+            log.info("state now is ProcessState.State.PROCESSING");
+
+            new Thread(processFeatureGraph).start();
+
+            responseEntity = ResponseEntity.ok().body(new UserFeatureGraphClient(new UserFeatureGraph(), processState.getState()));
+
+        } else if (state.equals(ProcessState.State.PROCESSING)) {
+
+            log.info("hit ProcessState.State.PROCESSING");
+
+            responseEntity = ResponseEntity.ok().body(new UserFeatureGraphClient(new UserFeatureGraph(), state));
+
+        } else if (state.equals(ProcessState.State.DONE)) {
+
+            log.info("hit ProcessState.State.DONE");
+
+            responseEntity = ResponseEntity.ok().body(new UserFeatureGraphClient(userFeatureGraphService.getFeaturesGraphsByUserId(id), state));
+
         }
 
+        return responseEntity;
+
+
     }
-
-
 }
+
+
+
 
 
 

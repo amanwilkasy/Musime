@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.internal.util.SerializationHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -18,11 +19,16 @@ public class UserFeatureGraphClient {
 
     private List<FeaturesGraph> featuresGraphs;
 
-    public UserFeatureGraphClient(UserFeatureGraph userFeatureGraph) {
+    private ProcessState.State processState;
+
+    public UserFeatureGraphClient(UserFeatureGraph userFeatureGraph, ProcessState.State processState) {
         this.id = userFeatureGraph.getId();
         this.userId = userFeatureGraph.getUserId();
-        this.featuresGraphs = (List<FeaturesGraph>) SerializationHelper.deserialize(userFeatureGraph.getFeatureGraph());
+        this.processState = processState;
+        this.featuresGraphs = userFeatureGraph.getFeatureGraph() != null ? (List<FeaturesGraph>) SerializationHelper.deserialize(userFeatureGraph.getFeatureGraph()) : new ArrayList<>();
+
     }
+
 }
 
 
