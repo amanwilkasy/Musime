@@ -30,6 +30,7 @@ public class SpotifyService {
     public User getCurrentUser() {
         Optional<User> user = Optional.empty();
         try {
+            throttle("getCurrentUser");
             user = Optional.ofNullable(spotifyApi.getCurrentUsersProfile().build().execute());
         } catch (IOException | SpotifyWebApiException e) {
             System.out.println("Error:5 " + e.getMessage());
