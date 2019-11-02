@@ -6,10 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -20,6 +18,7 @@ import java.net.URISyntaxException;
 public class SpotifyAuthController {
 
     private SpotifyAuthorization spotifyAuthorization;
+    private RestTemplate restTemplate = new RestTemplate();
 
     public SpotifyAuthController(SpotifyAuthorization spotifyAuthorization) {
         this.spotifyAuthorization = spotifyAuthorization;
@@ -29,6 +28,13 @@ public class SpotifyAuthController {
     public ResponseEntity<URI> getLogin() {
         return ResponseEntity.ok().body(spotifyAuthorization.authorizeLogin());
     }
+
+    @PostMapping("open")
+    public ResponseEntity<String> openFromClient(@RequestBody String url) {
+        log.info("url income " + url);
+        return restTemplate.getForEntity(url, String.class);
+    }
+
 
     @GetMapping("callback")
     public ResponseEntity<String> callback(@RequestParam("code") String code) throws URISyntaxException {
