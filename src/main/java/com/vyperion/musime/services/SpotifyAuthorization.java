@@ -19,8 +19,7 @@ public class SpotifyAuthorization {
     private String code;
     private String clientId = System.getenv().get("CLIENTID");
     private String clientSecret = System.getenv().get("CLIENTSECRET");
-
-    private static final URI redirectUri = SpotifyHttpManager.makeUri("https://musime.herokuapp.com/spotify-auth/callback");
+    private URI redirectUri = SpotifyHttpManager.makeUri(System.getenv("SITEURL"));
 
     private static final String scopes = "user-read-private,user-read-email,playlist-read-private,user-top-read";
     private SpotifyApi spotifyApi = new SpotifyApi.Builder()

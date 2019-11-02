@@ -3,6 +3,8 @@ package com.vyperion.musime.controllers;
 import com.vyperion.musime.services.SpotifyAuthorization;
 import com.wrapper.spotify.model_objects.credentials.AuthorizationCodeCredentials;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 
 @Slf4j
 @RestController
@@ -28,11 +31,15 @@ public class SpotifyAuthController {
     }
 
     @GetMapping("callback")
-    public ResponseEntity<String> callback(@RequestParam("code") String code) {
+    public ResponseEntity<String> callback(@RequestParam("code") String code) throws URISyntaxException {
         spotifyAuthorization.setCode(code);
         AuthorizationCodeCredentials creds = spotifyAuthorization.getAccessCredentials();
         System.out.println("Token: ".concat(creds.getAccessToken()));
-        return ResponseEntity.ok().body("Successful Login " + creds.getAccessToken());
+
+        URI client = new URI("https://musime-client.herokuapp.com/graphs");
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setLocation(client);
+        return new ResponseEntity<>(httpHeaders, HttpStatus.SEE_OTHER);
     }
 
     @GetMapping("refresh")
