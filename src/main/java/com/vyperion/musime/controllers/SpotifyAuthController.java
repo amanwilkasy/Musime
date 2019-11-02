@@ -9,8 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @RestController
@@ -30,9 +33,12 @@ public class SpotifyAuthController {
     }
 
     @PostMapping("open")
-    public ResponseEntity<String> openFromClient(@RequestBody String url) {
+    public ResponseEntity<String> openFromClient(@RequestBody String url) throws UnsupportedEncodingException {
         log.info("url income " + url);
-        return restTemplate.getForEntity(url, String.class);
+        String decoded = URLDecoder.decode(url, String.valueOf(StandardCharsets.UTF_8));
+        log.info("decoded " + decoded);
+
+        return restTemplate.getForEntity(decoded, String.class);
     }
 
 
