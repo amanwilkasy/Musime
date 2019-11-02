@@ -19,14 +19,13 @@ public class SpotifyAuthorization {
 
     private String code;
 
-    @Value("${CLIENTID:19f19dbaf333441b95d99d89515e8af5}")
+    @Value("${CLIENTID:}")
     private static String clientId;
-    @Value("${CLIENTSECRET:74e2b03c22824ee7801dc9936b8854cf}")
+    @Value("${CLIENTSECRET:}")
     private static String clientSecret;
-     @Value("${SITEURL:https://musime.herokuapp.com/spotify-auth/callback}")
     private static String siteUrl;
 
-    private static final URI redirectUri = SpotifyHttpManager.makeUri(siteUrl);
+    private static final URI redirectUri = SpotifyHttpManager.makeUri("https://musime.herokuapp.com/spotify-auth/callback");
 
     private static final String scopes = "user-read-private,user-read-email,playlist-read-private,user-top-read";
     private SpotifyApi spotifyApi = new SpotifyApi.Builder()
