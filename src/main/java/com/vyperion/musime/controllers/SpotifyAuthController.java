@@ -32,23 +32,13 @@ public class SpotifyAuthController {
         return ResponseEntity.ok().body(spotifyAuthorization.authorizeLogin());
     }
 
-//    @PostMapping("open")
-//    public ResponseEntity<String> openFromClient(@RequestBody String url) throws UnsupportedEncodingException {
-//        log.info("url income " + url);
-//        String decoded = URLDecoder.decode(url, String.valueOf(StandardCharsets.UTF_8));
-//        log.info("decoded " + decoded);
-//
-//        return restTemplate.getForEntity(decoded, String.class);
-//    }
-
-
     @GetMapping("callback")
     public ResponseEntity<String> callback(@RequestParam("code") String code) throws URISyntaxException {
         spotifyAuthorization.setCode(code);
         AuthorizationCodeCredentials creds = spotifyAuthorization.getAccessCredentials();
         System.out.println("Token: ".concat(creds.getAccessToken()));
 
-        URI client = new URI("https://musime-client.herokuapp.com/graphs");
+        URI client = new URI("https://musime-client.herokuapp.com/graphs/?success=true");
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(client);
         return new ResponseEntity<>(httpHeaders, HttpStatus.SEE_OTHER);
