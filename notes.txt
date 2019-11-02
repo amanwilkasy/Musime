@@ -11,6 +11,9 @@ spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true
     https://musime.herokuapp.com/spotify-auth/callback
 
 
+        AuthorizationCodeCredentials creds = spotifyAuthorization.getAccessCredentials();
+        System.out.println("Token: ".concat(creds.getAccessToken()));
+
 //xgvpcca56pwz4nykvdkd9ovxs
 spotify user id
 

@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -21,7 +20,6 @@ import java.net.URISyntaxException;
 public class SpotifyAuthController {
 
     private SpotifyAuthorization spotifyAuthorization;
-    private RestTemplate restTemplate = new RestTemplate();
 
     public SpotifyAuthController(SpotifyAuthorization spotifyAuthorization) {
         this.spotifyAuthorization = spotifyAuthorization;
@@ -35,9 +33,6 @@ public class SpotifyAuthController {
     @GetMapping("callback")
     public ResponseEntity<String> callback(@RequestParam("code") String code) throws URISyntaxException {
         spotifyAuthorization.setCode(code);
-        AuthorizationCodeCredentials creds = spotifyAuthorization.getAccessCredentials();
-        System.out.println("Token: ".concat(creds.getAccessToken()));
-
         URI client = new URI("https://musime-client.herokuapp.com/graphs/?success=true");
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(client);
