@@ -5,6 +5,9 @@ import com.vyperion.musime.dto.UserFeatureGraph;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.Instant;
+
 
 @Slf4j
 @Service
@@ -23,7 +26,11 @@ public class ProcessFeatureGraph implements Runnable{
     public void run() {
 
         log.info("hit process runner");
+        Instant start = Instant.now();
         UserFeatureGraph userFeatureGraph = spotifyService.generateFeaturesGraphForAllSongs();
+        Instant end = Instant.now();
+        log.info("****** " + Duration.between(start, end).toMillis());
+
         userFeatureGraphService.saveFeaturesGraph(userFeatureGraph);
 
         ProcessState processState = processStateService.getProcessStateByUserId(userFeatureGraph.getUserId());

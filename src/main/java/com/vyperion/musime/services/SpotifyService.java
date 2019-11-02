@@ -58,8 +58,7 @@ public class SpotifyService {
         } catch (IOException | SpotifyWebApiException e) {
             System.out.println("Error:1 " + e.getMessage());
         }
-        List<PlaylistSimplified> tempForTest = new ArrayList<>(playlists.subList(0, 20));
-        return tempForTest;
+        return playlists;
     }
 
     public List<PlaylistTrack> getTracksFromPlaylist(String playlistId) {
@@ -207,7 +206,7 @@ public class SpotifyService {
             int getPopularityMapKey = song.getPopularity();
             int getAcousticnessMapKey = Math.round(song.getAcousticness() * 100);
             int getDanceabilityMapKey = Math.round(song.getDanceability() * 10);
-            int getDurationMsMapKey = Math.round(song.getDurationMs() / 10);
+            int getDurationMsMapKey = Math.round(song.getDurationMs() / 1000);
             int getEnergyMapKey = Math.round(song.getEnergy() * 100);
             int getInstrumentalnessMapKey = Math.round(song.getInstrumentalness() * 100);
             int getKeyMapKey = (int) song.getKey();
