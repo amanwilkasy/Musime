@@ -6,14 +6,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @RestController
@@ -32,14 +32,14 @@ public class SpotifyAuthController {
         return ResponseEntity.ok().body(spotifyAuthorization.authorizeLogin());
     }
 
-    @PostMapping("open")
-    public ResponseEntity<String> openFromClient(@RequestBody String url) throws UnsupportedEncodingException {
-        log.info("url income " + url);
-        String decoded = URLDecoder.decode(url, String.valueOf(StandardCharsets.UTF_8));
-        log.info("decoded " + decoded);
-
-        return restTemplate.getForEntity(decoded, String.class);
-    }
+//    @PostMapping("open")
+//    public ResponseEntity<String> openFromClient(@RequestBody String url) throws UnsupportedEncodingException {
+//        log.info("url income " + url);
+//        String decoded = URLDecoder.decode(url, String.valueOf(StandardCharsets.UTF_8));
+//        log.info("decoded " + decoded);
+//
+//        return restTemplate.getForEntity(decoded, String.class);
+//    }
 
 
     @GetMapping("callback")

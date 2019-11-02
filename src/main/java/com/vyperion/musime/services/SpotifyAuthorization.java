@@ -39,7 +39,7 @@ public class SpotifyAuthorization {
         return spotifyApi.authorizationCodeUri()
                 .scope(SpotifyAuthorization.scopes)
                 .response_type("code")
-                .show_dialog(false)
+                .show_dialog(true)
                 .build();
     }
 
