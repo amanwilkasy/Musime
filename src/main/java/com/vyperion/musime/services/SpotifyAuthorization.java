@@ -19,11 +19,11 @@ public class SpotifyAuthorization {
 
     private String code;
 
-    @Value("${CLIENTID}")
+    @Value("${CLIENTID:19f19dbaf333441b95d99d89515e8af5}")
     private static String clientId;
-    @Value("${CLIENTSECRET}")
+    @Value("${CLIENTSECRET:74e2b03c22824ee7801dc9936b8854cf}")
     private static String clientSecret;
-     @Value("${SITEURL}")
+     @Value("${SITEURL:https://musime.herokuapp.com/spotify-auth/callback}")
     private static String siteUrl;
 
     private static final URI redirectUri = SpotifyHttpManager.makeUri(siteUrl);
