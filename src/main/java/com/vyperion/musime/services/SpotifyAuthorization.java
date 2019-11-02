@@ -6,6 +6,7 @@ import com.wrapper.spotify.exceptions.SpotifyWebApiException;
 import com.wrapper.spotify.model_objects.credentials.AuthorizationCodeCredentials;
 import com.wrapper.spotify.requests.authorization.authorization_code.AuthorizationCodeUriRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
@@ -17,11 +18,15 @@ import java.net.URI;
 public class SpotifyAuthorization {
 
     private String code;
-    private static final String clientId = "19f19dbaf333441b95d99d89515e8af5";
-    private static final String clientSecret = "74e2b03c22824ee7801dc9936b8854cf";
-//    private static final URI redirectUri = SpotifyHttpManager.makeUri("https://musime.herokuapp.com/spotify-auth/callback");
-private static final URI redirectUri =
-        SpotifyHttpManager.makeUri("http://f77c89e0.ngrok.io/spotify-auth/callback");
+
+    @Value("${CLIENTID}")
+    private static String clientId;
+    @Value("${CLIENTSECRET}")
+    private static String clientSecret;
+     @Value("${SITEURL}")
+    private static String siteUrl;
+
+    private static final URI redirectUri = SpotifyHttpManager.makeUri(siteUrl);
 
     private static final String scopes = "user-read-private,user-read-email,playlist-read-private,user-top-read";
     private SpotifyApi spotifyApi = new SpotifyApi.Builder()
