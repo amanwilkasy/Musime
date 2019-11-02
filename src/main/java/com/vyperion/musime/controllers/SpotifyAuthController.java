@@ -33,6 +33,8 @@ public class SpotifyAuthController {
     @GetMapping("callback")
     public ResponseEntity<String> callback(@RequestParam("code") String code) throws URISyntaxException {
         spotifyAuthorization.setCode(code);
+        AuthorizationCodeCredentials creds = spotifyAuthorization.getAccessCredentials();
+        log.info("Got token successfully");
         URI client = new URI("https://musime-client.herokuapp.com/graphs/?success=true");
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(client);
